@@ -1,0 +1,594 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnSphere AI | Intelligent Learning Assistant</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root {
+  --navy:#101a35; --navy2:#182747; --blue:#5575f5;
+  --bg:#f4f6fb; --white:#fff; --text:#202b45;
+  --muted:#7b849a; --border:#e7eaf2; --green:#16a477;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,textarea{font:inherit}
+button{cursor:pointer;border:0}
+.app{display:flex;min-height:100vh}
+.sidebar{
+ width:245px;background:var(--navy);color:white;padding:25px 17px;
+ display:flex;flex-direction:column;flex-shrink:0
+}
+.brand{display:flex;align-items:center;gap:11px;padding:5px 8px 30px}
+.brand-icon{width:42px;height:42px;border-radius:13px;background:#607df7;
+ display:grid;place-items:center;font-size:22px}
+.brand h2{font-size:18px;letter-spacing:-.5px}
+.brand small{display:block;color:#aab6d0;font-size:10px;margin-top:4px}
+.nav-label{font-size:10px;color:#8290ad;font-weight:bold;letter-spacing:1.5px;
+ padding:12px 12px}
+.nav-btn{width:100%;padding:13px 14px;color:#bdc8df;background:transparent;
+ border-radius:10px;text-align:left;margin:3px 0;font-size:13px;display:flex;
+ gap:12px;align-items:center}
+.nav-btn:hover,.nav-btn.active{background:#26375c;color:white}
+.nav-btn span{font-size:17px;width:20px}
+.sidebar-bottom{margin-top:auto;background:#1b2a4a;border-radius:13px;
+ padding:15px;font-size:12px;color:#b9c6df;line-height:1.7}
+.sidebar-bottom strong{color:white;display:block;margin-bottom:5px}
+.main{flex:1;min-width:0}
+.topbar{height:76px;background:white;border-bottom:1px solid var(--border);
+ display:flex;align-items:center;justify-content:space-between;padding:0 35px}
+.topbar h3{font-size:17px}
+.top-right{display:flex;align-items:center;gap:15px}
+.status{font-size:11px;color:var(--green);background:#e9f8f2;
+ padding:7px 11px;border-radius:20px}
+.avatar{width:35px;height:35px;border-radius:50%;background:#e7ebff;
+ color:#5068db;display:grid;place-items:center;font-weight:bold}
+.content{padding:30px 35px;max-width:1450px;margin:auto}
+.page{display:none}.page.active{display:block}
+.welcome{background:linear-gradient(115deg,#17264a,#344d91);
+ color:white;border-radius:18px;padding:30px 32px;margin-bottom:25px;
+ position:relative;overflow:hidden}
+.welcome:after{content:"✦";position:absolute;right:60px;top:15px;
+ font-size:110px;color:#ffffff13}
+.welcome h1{font-size:25px;margin-bottom:10px}
+.welcome p{color:#d1dcf5;font-size:13px;line-height:1.7;max-width:620px}
+.eyebrow{font-size:10px;letter-spacing:1.7px;color:#aebff4;
+ font-weight:bold;margin-bottom:12px}
+.section-head{display:flex;align-items:center;justify-content:space-between;
+ margin:25px 0 15px}
+.section-head h2{font-size:17px}
+.section-head p{font-size:12px;color:var(--muted);margin-top:5px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.stat,.panel,.tool-card{background:white;border:1px solid var(--border);
+ border-radius:14px;padding:19px}
+.stat{display:flex;gap:13px;align-items:center}
+.stat-icon{width:42px;height:42px;border-radius:12px;background:#eef1ff;
+ display:grid;place-items:center;font-size:19px}
+.stat strong{font-size:22px;display:block}
+.stat small{font-size:11px;color:var(--muted)}
+.grid-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.tool-card{cursor:pointer;transition:.2s}
+.tool-card:hover{transform:translateY(-3px);border-color:#aab8ff}
+.tool-icon{font-size:23px;margin-bottom:13px}
+.tool-card h3{font-size:14px;margin-bottom:7px}
+.tool-card p{font-size:11px;color:var(--muted);line-height:1.6}
+.primary{background:var(--blue);color:white;padding:11px 17px;
+ border-radius:9px;font-size:12px;font-weight:600}
+.primary:hover{background:#405fe0}
+.secondary{background:#eef1ff;color:#405bd2;padding:10px 15px;
+ border-radius:9px;font-size:12px;font-weight:600}
+.danger{background:#fff0f0;color:#d84c4c;padding:8px 11px;
+ border-radius:8px;font-size:11px}
+input,textarea{border:1px solid var(--border);border-radius:9px;
+ padding:12px;background:white;color:var(--text);outline:none;width:100%}
+input:focus,textarea:focus{border-color:var(--blue)}
+.upload-area{border:2px dashed #cbd3e9;border-radius:14px;padding:35px;
+ text-align:center;background:#fafbff;cursor:pointer}
+.upload-area:hover{border-color:var(--blue)}
+.upload-area .big{font-size:35px;margin-bottom:10px}
+.upload-area h3{font-size:15px;margin-bottom:7px}
+.upload-area p{font-size:11px;color:var(--muted)}
+.doc-row{display:flex;align-items:center;justify-content:space-between;
+ padding:14px 0;border-bottom:1px solid var(--border);gap:12px}
+.doc-row:last-child{border:0}
+.doc-info{display:flex;align-items:center;gap:12px;min-width:0}
+.doc-icon{width:38px;height:38px;border-radius:10px;background:#fff0f0;
+ display:grid;place-items:center}
+.doc-info strong{font-size:12px;display:block;overflow-wrap:anywhere}
+.doc-info small{font-size:10px;color:var(--muted)}
+.chat-layout{display:grid;grid-template-columns:1fr 245px;gap:17px}
+.chat-panel{background:white;border:1px solid var(--border);border-radius:14px;
+ display:flex;flex-direction:column;height:610px;overflow:hidden}
+.chat-head{padding:17px 20px;border-bottom:1px solid var(--border)}
+.chat-head strong{font-size:14px}
+.chat-head p{font-size:11px;color:var(--muted);margin-top:5px}
+.messages{padding:20px;overflow-y:auto;flex:1;display:flex;
+ flex-direction:column;gap:15px}
+.message{max-width:85%;padding:13px 15px;border-radius:13px;
+ font-size:12px;line-height:1.8;white-space:pre-wrap}
+.bot{background:#f1f3fa;align-self:flex-start}
+.user{background:#e9edff;align-self:flex-end}
+.message small{display:block;color:#6376c9;margin-top:8px;font-size:10px}
+.chat-input{padding:15px;border-top:1px solid var(--border);
+ display:flex;gap:9px}
+.chat-input input{flex:1}
+.chat-side{display:flex;flex-direction:column;gap:14px}
+.chat-side .panel h3{font-size:13px;margin-bottom:12px}
+.chat-side p{font-size:11px;color:var(--muted);line-height:1.7}
+.chat-side button{width:100%;text-align:left;background:#f4f6fc;
+ padding:10px;border-radius:8px;margin:4px 0;font-size:11px;color:#43547d}
+.result{background:#f7f8fc;border:1px solid var(--border);
+ border-radius:12px;padding:18px;margin-top:15px;
+ font-size:13px;line-height:1.8;white-space:pre-wrap}
+.result h3{font-size:14px;margin-bottom:10px}
+.setting-row{padding:17px 0;border-bottom:1px solid var(--border)}
+.setting-row h3{font-size:13px;margin-bottom:7px}
+.setting-row p{font-size:11px;color:var(--muted);margin-bottom:10px}
+.hint{font-size:10px;color:var(--muted);line-height:1.6;margin-top:9px}
+.empty{text-align:center;padding:35px;color:var(--muted);font-size:12px}
+#toast{position:fixed;bottom:25px;right:25px;background:#182747;color:white;
+ padding:13px 18px;border-radius:10px;font-size:12px;display:none;
+ z-index:10;box-shadow:0 8px 25px #0002}
+.loading{opacity:.65;pointer-events:none}
+@media(max-width:900px){
+ .sidebar{width:70px;padding:20px 9px}
+ .brand{padding:5px 4px 30px}.brand h2,.brand small,.nav-label,
+ .nav-btn .nav-text,.sidebar-bottom{display:none}
+ .nav-btn{justify-content:center;padding:13px 5px}
+ .content{padding:22px 17px}.topbar{padding:0 18px}
+ .chat-layout{grid-template-columns:1fr}.chat-side{display:grid;grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+ .stats,.grid-tools{grid-template-columns:1fr}
+ .welcome{padding:23px}.welcome h1{font-size:21px}
+ .topbar{height:65px}.content{padding:17px 12px}
+ .chat-panel{height:570px}.chat-side{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand">
+  <div class="brand-icon">✦</div>
+  <div><h2>LearnSphere AI</h2><small>INTELLIGENT LEARNING</small></div>
+ </div>
+ <div class="nav-label">WORKSPACE</div>
+ <button class="nav-btn active" data-page="dashboard"><span>▦</span><span class="nav-text">Dashboard</span></button>
+ <button class="nav-btn" data-page="documents"><span>▤</span><span class="nav-text">My Documents</span></button>
+ <button class="nav-btn" data-page="chat"><span>◉</span><span class="nav-text">AI Chat</span></button>
+ <div class="nav-label">LEARNING</div>
+ <button class="nav-btn" data-page="tools"><span>✧</span><span class="nav-text">Study Tools</span></button>
+ <button class="nav-btn" data-page="practice"><span>✓</span><span class="nav-text">Quiz & Practice</span></button>
+ <div class="nav-label">PREFERENCES</div>
+ <button class="nav-btn" data-page="settings"><span>⚙</span><span class="nav-text">Settings</span></button>
+ <div class="sidebar-bottom">
+  <strong>✦ Your AI Study Partner</strong>
+  Learn smarter with your own academic documents.
+ </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+ <h3 id="pageTitle">Dashboard</h3>
+ <div class="top-right"><span class="status">● Learning workspace</span><div class="avatar">LS</div></div>
+</header>
+
+<div class="content">
+<!-- DASHBOARD -->
+<section class="page active" id="dashboard">
+ <div class="welcome">
+  <div class="eyebrow">YOUR PERSONAL AI LEARNING SPACE</div>
+  <h1>Welcome to LearnSphere AI ✨</h1>
+  <p>Your intelligent academic assistant. Upload your notes, ask questions, understand difficult concepts, and prepare for exams using your own study materials.</p>
+ </div>
+ <div class="stats">
+  <div class="stat"><div class="stat-icon">📚</div><div><strong id="docCount">0</strong><small>Uploaded documents</small></div></div>
+  <div class="stat"><div class="stat-icon">🧠</div><div><strong id="chunkCount">0</strong><small>Knowledge chunks</small></div></div>
+  <div class="stat"><div class="stat-icon">💬</div><div><strong id="questionCount">0</strong><small>Questions asked</small></div></div>
+ </div>
+ <div class="section-head"><div><h2>Explore your learning tools</h2><p>Everything you need for smarter studying.</p></div></div>
+ <div class="grid-tools">
+  <div class="tool-card" onclick="navigate('documents')"><div class="tool-icon">📄</div><h3>Upload Documents</h3><p>Upload PDF and TXT study materials to build your knowledge base.</p></div>
+  <div class="tool-card" onclick="navigate('chat')"><div class="tool-icon">🤖</div><h3>Ask AI Assistant</h3><p>Ask questions and receive answers grounded in your documents.</p></div>
+  <div class="tool-card" onclick="runTool('summary')"><div class="tool-icon">📝</div><h3>Chapter Summary</h3><p>Turn long academic content into clear, easy summaries.</p></div>
+  <div class="tool-card" onclick="runTool('mcq')"><div class="tool-icon">☑️</div><h3>MCQ Generator</h3><p>Generate multiple-choice questions for exam preparation.</p></div>
+  <div class="tool-card" onclick="runTool('flashcards')"><div class="tool-icon">🗂️</div><h3>Flashcards</h3><p>Practice key concepts with question-and-answer cards.</p></div>
+  <div class="tool-card" onclick="navigate('practice')"><div class="tool-icon">🎯</div><h3>Quiz & Practice</h3><p>Test your understanding using your uploaded study material.</p></div>
+ </div>
+ <div class="section-head"><div><h2>Recent documents</h2><p>Your latest uploaded study materials.</p></div><button class="secondary" onclick="navigate('documents')">View all</button></div>
+ <div class="panel" id="recentDocs"><div class="empty">No documents uploaded yet.</div></div>
+</section>
+
+<!-- DOCUMENTS -->
+<section class="page" id="documents">
+ <div class="section-head"><div><h2>My Documents</h2><p>Build your personal academic knowledge base.</p></div></div>
+ <div class="upload-area" id="dropArea">
+  <div class="big">☁️</div><h3>Upload your study materials</h3>
+  <p>Drag and drop PDF or TXT files here, or click to browse.</p>
+  <p style="margin-top:8px">Supported formats: PDF, TXT · Maximum 10 MB per file</p>
+  <input type="file" id="fileInput" accept=".pdf,.txt,application/pdf,text/plain" multiple hidden>
+ </div>
+ <p class="hint" id="uploadStatus">Your documents are processed in this browser and stored locally.</p>
+ <div class="section-head"><div><h2>Knowledge library</h2><p>Uploaded documents and processing status.</p></div></div>
+ <div class="panel" id="documentList"><div class="empty">Your document library is empty.</div></div>
+</section>
+
+<!-- CHAT -->
+<section class="page" id="chat">
+ <div class="section-head"><div><h2>AI Study Assistant</h2><p>Ask questions based on your uploaded documents.</p></div></div>
+ <div class="chat-layout">
+  <div class="chat-panel">
+   <div class="chat-head"><strong>✦ LearnSphere AI Assistant</strong><p>RAG-powered document question answering</p></div>
+   <div class="messages" id="messages">
+    <div class="message bot">Hello! I'm your LearnSphere AI study assistant. Upload your PDF or TXT notes, then ask me anything about them. I'll retrieve relevant information before answering.</div>
+   </div>
+   <div class="chat-input">
+    <input id="questionInput" placeholder="Ask a question about your study materials..." onkeydown="if(event.key==='Enter')askQuestion()">
+    <button class="primary" onclick="askQuestion()">Send ➤</button>
+   </div>
+  </div>
+  <div class="chat-side">
+   <div class="panel"><h3>💡 Suggested questions</h3>
+    <button onclick="suggest('Summarize the main concepts in my documents.')">Summarize my notes</button>
+    <button onclick="suggest('Explain the most important definitions.')">Explain key definitions</button>
+    <button onclick="suggest('Give me examples of the main concepts.')">Give me examples</button>
+    <button onclick="suggest('What are the important exam topics?')">Important exam topics</button>
+   </div>
+   <div class="panel"><h3>📚 Knowledge base</h3><p id="chatDocInfo">No documents indexed yet.</p><p class="hint">Answers are generated using retrieved document chunks. Sources are shown with the response.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- TOOLS -->
+<section class="page" id="tools">
+ <div class="section-head"><div><h2>Smart Study Tools</h2><p>Generate study material from your uploaded documents.</p></div></div>
+ <div class="grid-tools">
+  <div class="tool-card" onclick="runTool('summary')"><div class="tool-icon">📝</div><h3>Chapter Summarizer</h3><p>Summarize your uploaded academic material.</p></div>
+  <div class="tool-card" onclick="runTool('mcq')"><div class="tool-icon">☑️</div><h3>MCQ Generator</h3><p>Create multiple-choice questions with answers.</p></div>
+  <div class="tool-card" onclick="runTool('quiz')"><div class="tool-icon">🎯</div><h3>Quiz Generator</h3><p>Generate a practice quiz from your notes.</p></div>
+  <div class="tool-card" onclick="runTool('flashcards')"><div class="tool-icon">🗂️</div><h3>Flashcard Generator</h3><p>Generate useful question-and-answer flashcards.</p></div>
+  <div class="tool-card" onclick="runTool('topics')"><div class="tool-icon">📌</div><h3>Important Topics</h3><p>Find key concepts for examination preparation.</p></div>
+  <div class="tool-card" onclick="runTool('simplify')"><div class="tool-icon">💡</div><h3>Simplify Concepts</h3><p>Explain difficult material in beginner-friendly language.</p></div>
+ </div>
+ <div class="panel" style="margin-top:20px">
+  <h3 style="font-size:14px;margin-bottom:10px">Study tool output</h3>
+  <div id="toolResult" class="empty">Choose a study tool above to generate content from your documents.</div>
+ </div>
+</section>
+
+<!-- PRACTICE -->
+<section class="page" id="practice">
+ <div class="section-head"><div><h2>Quiz & Practice</h2><p>Prepare for your next examination.</p></div></div>
+ <div class="panel">
+  <h3 style="font-size:15px;margin-bottom:8px">Create a practice quiz</h3>
+  <p class="hint" style="margin-bottom:15px">The quiz will be generated using your indexed study materials.</p>
+  <label style="font-size:11px">Number of questions</label>
+  <select id="quizCount" style="display:block;width:100%;padding:12px;border:1px solid var(--border);border-radius:9px;margin:8px 0 15px">
+   <option value="5">5 questions</option><option value="10">10 questions</option><option value="15">15 questions</option>
+  </select>
+  <button class="primary" onclick="runTool('quiz')">Generate practice quiz</button>
+  <div id="quizResult" class="result" style="display:none"></div>
+ </div>
+</section>
+
+<!-- SETTINGS -->
+<section class="page" id="settings">
+ <div class="section-head"><div><h2>Settings</h2><p>Configure your AI learning assistant.</p></div></div>
+ <div class="panel">
+  <div class="setting-row">
+   <h3>Google Gemini API Key</h3>
+   <p>Enter your API key to enable embeddings and AI responses. It is kept in this browser only.</p>
+   <input id="apiKey" type="password" placeholder="Enter your Gemini API key">
+   <div style="display:flex;gap:9px;margin-top:10px;flex-wrap:wrap">
+    <button class="primary" onclick="saveKey()">Save API key</button>
+    <button class="secondary" onclick="testKey()">Test connection</button>
+   </div>
+   <p class="hint">Get an API key from Google AI Studio. Do not publish this HTML file with your personal API key included.</p>
+  </div>
+  <div class="setting-row">
+   <h3>Answer language</h3>
+   <p>Choose your preferred explanation language.</p>
+   <select id="language" style="padding:11px;border:1px solid var(--border);border-radius:9px;width:100%">
+    <option>English</option><option>Urdu</option><option>Roman Urdu</option>
+   </select>
+  </div>
+  <div class="setting-row">
+   <h3>Answer detail</h3>
+   <p>Choose how detailed your AI explanations should be.</p>
+   <select id="detail" style="padding:11px;border:1px solid var(--border);border-radius:9px;width:100%">
+    <option>Simple and beginner-friendly</option><option>Detailed academic explanation</option>
+   </select>
+  </div>
+  <div class="setting-row">
+   <h3>Local data</h3><p>Delete locally stored documents and their embeddings.</p>
+   <button class="danger" onclick="clearLibrary()">Clear all documents</button>
+  </div>
+ </div>
+</section>
+</div>
+</main>
+</div>
+<div id="toast"></div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+ "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const DB_NAME = "LearnSphereRAG";
+const STORE = "chunks";
+let db;
+let busy = false;
+let questionTotal = Number(localStorage.getItem("ls_questions") || 0);
+
+function notify(message){
+ const el=document.getElementById("toast");
+ el.textContent=message;el.style.display="block";
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>el.style.display="none",3500);
+}
+function navigate(page){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(page).classList.add("active");
+ document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ const names={dashboard:"Dashboard",documents:"My Documents",chat:"AI Chat",tools:"Study Tools",practice:"Quiz & Practice",settings:"Settings"};
+ document.getElementById("pageTitle").textContent=names[page];
+ if(page==="chat")refreshChatInfo();
+}
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.page)));
+
+function openDB(){
+ return new Promise((resolve,reject)=>{
+  const req=indexedDB.open(DB_NAME,1);
+  req.onupgradeneeded=()=>req.result.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
+  req.onsuccess=()=>{db=req.result;resolve()};
+  req.onerror=()=>reject(req.error);
+ });
+}
+function dbRequest(mode,action){
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE,mode),store=tx.objectStore(STORE);
+  const req=action(store);
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+async function getChunks(){return dbRequest("readonly",s=>s.getAll())}
+async function saveChunk(chunk){return dbRequest("readwrite",s=>s.add(chunk))}
+async function deleteDocChunks(name){
+ const all=await getChunks();
+ const tx=db.transaction(STORE,"readwrite"),store=tx.objectStore(STORE);
+ all.filter(c=>c.file===name).forEach(c=>store.delete(c.id));
+ return new Promise(resolve=>tx.oncomplete=resolve);
+}
+
+function getKey(){return document.getElementById("apiKey").value.trim()||localStorage.getItem("ls_gemini_key")||""}
+function saveKey(){
+ const k=document.getElementById("apiKey").value.trim();
+ if(!k)return notify("Please enter your Gemini API key.");
+ localStorage.setItem("ls_gemini_key",k);notify("API key saved in this browser.");
+}
+function loadKey(){document.getElementById("apiKey").value=localStorage.getItem("ls_gemini_key")||""}
+
+async function geminiRequest(model,method,body){
+ const key=getKey();if(!key)throw Error("Add your Gemini API key in Settings first.");
+ const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:${method}?key=${encodeURIComponent(key)}`;
+ const response=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+ const data=await response.json();
+ if(!response.ok)throw Error(data.error?.message||"Gemini API request failed.");
+ return data;
+}
+async function embedText(text){
+ const data=await geminiRequest("gemini-embedding-001","embedContent",{
+  model:"models/gemini-embedding-001",
+  content:{parts:[{text}]},
+  outputDimensionality:768
+ });
+ return data.embedding.values;
+}
+async function generateText(prompt){
+ const data=await geminiRequest("gemini-2.5-flash","generateContent",{
+  contents:[{role:"user",parts:[{text:prompt}]}],
+  generationConfig:{temperature:0.3,maxOutputTokens:2500}
+ });
+ return data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("")||"No response generated.";
+}
+async function testKey(){
+ try{notify("Testing Gemini connection...");
+  await generateText("Reply with exactly: Connection successful.");
+  notify("Gemini connection successful!");
+ }catch(e){notify(e.message)}
+}
+
+function splitChunks(text,size=1100,overlap=180){
+ const chunks=[];let start=0;
+ while(start<text.length){
+  const end=Math.min(start+size,text.length);
+  const part=text.slice(start,end).trim();
+  if(part.length>30)chunks.push(part);
+  if(end===text.length)break;
+  start=end-overlap;
+ }
+ return chunks;
+}
+async function extractFile(file){
+ if(file.size>10*1024*1024)throw Error("File is larger than 10 MB.");
+ const ext=file.name.split(".").pop().toLowerCase();
+ if(ext==="txt")return [{page:1,text:await file.text()}];
+ if(ext!=="pdf")throw Error("Only PDF and TXT files are supported.");
+ const buffer=await file.arrayBuffer();
+ const pdf=await pdfjsLib.getDocument({data:buffer}).promise;
+ const pages=[];
+ for(let i=1;i<=pdf.numPages;i++){
+  const page=await pdf.getPage(i);
+  const content=await page.getTextContent();
+  const text=content.items.map(x=>x.str).join(" ");
+  if(text.trim())pages.push({page:i,text});
+ }
+ return pages;
+}
+async function processFile(file){
+ const status=document.getElementById("uploadStatus");
+ status.textContent="Processing "+file.name+"...";
+ const pages=await extractFile(file);
+ if(!pages.length)throw Error("No readable text found. This may be a scanned PDF; OCR is not included.");
+ let total=0;
+ for(const pg of pages){
+  for(const part of splitChunks(pg.text)){
+   const vector=await embedText(part);
+   await saveChunk({file:file.name,page:pg.page,text:part,vector,created:Date.now()});
+   total++;
+  }
+ }
+ status.textContent=`Successfully indexed ${file.name}: ${total} chunks.`;
+}
+async function handleFiles(files){
+ if(!files.length)return;
+ if(!getKey()){notify("Please add your Gemini API key in Settings first.");navigate("settings");return}
+ const input=document.getElementById("fileInput");
+ for(const file of files){
+  try{await processFile(file);notify(file.name+" indexed successfully.");}
+  catch(e){notify(file.name+": "+e.message);document.getElementById("uploadStatus").textContent=e.message}
+ }
+ input.value="";
+ await refreshUI();
+}
+const fileInput=document.getElementById("fileInput");
+document.getElementById("dropArea").onclick=()=>fileInput.click();
+fileInput.onchange=()=>handleFiles([...fileInput.files]);
+const drop=document.getElementById("dropArea");
+drop.ondragover=e=>{e.preventDefault();drop.style.borderColor="#5575f5"};
+drop.ondragleave=()=>drop.style.borderColor="";
+drop.ondrop=e=>{e.preventDefault();drop.style.borderColor="";handleFiles([...e.dataTransfer.files])};
+
+function cosine(a,b){
+ let dot=0,na=0,nb=0;
+ for(let i=0;i<Math.min(a.length,b.length);i++){dot+=a[i]*b[i];na+=a[i]*a[i];nb+=b[i]*b[i]}
+ return dot/(Math.sqrt(na)*Math.sqrt(nb)||1);
+}
+async function retrieve(question,limit=6){
+ const all=await getChunks();
+ if(!all.length)throw Error("Upload and index at least one document first.");
+ const queryVector=await embedText(question);
+ return all.map(c=>({...c,score:cosine(queryVector,c.vector)}))
+  .sort((a,b)=>b.score-a.score).slice(0,limit);
+}
+function contextFrom(results){
+ return results.map((r,i)=>`[Source ${i+1}: ${r.file}, page ${r.page}]\n${r.text}`).join("\n\n");
+}
+function languageInstruction(){
+ const language=document.getElementById("language")?.value||"English";
+ const detail=document.getElementById("detail")?.value||"Simple and beginner-friendly";
+ return `Answer in ${language}. Use a ${detail.toLowerCase()} style.`;
+}
+function addMessage(text,type,sources=[]){
+ const box=document.getElementById("messages");
+ const el=document.createElement("div");
+ el.className="message "+type;
+ el.textContent=text;
+ if(sources.length){
+  const small=document.createElement("small");
+  small.textContent="Sources: "+[...new Set(sources.map(s=>`${s.file} (page ${s.page})`))].join("; ");
+  el.appendChild(small);
+ }
+ box.appendChild(el);box.scrollTop=box.scrollHeight;
+}
+async function askQuestion(){
+ if(busy)return;
+ const input=document.getElementById("questionInput");
+ const question=input.value.trim();if(!question)return;
+ input.value="";addMessage(question,"user");
+ busy=true;
+ try{
+  const results=await retrieve(question,6);
+  const context=contextFrom(results);
+  const prompt=`You are LearnSphere AI, an academic learning assistant.
+${languageInstruction()}
+Answer the student's question using ONLY the provided retrieved context.
+If the context does not contain enough information, clearly say that the uploaded documents do not provide enough information. Do not invent facts.
+Explain clearly and use examples only when supported or clearly labelled as illustrative.
+Student question: ${question}
+Retrieved document context:
+${context}
+Provide a helpful, well-structured answer. Do not invent source references; the application will display the retrieved sources separately.`;
+  const answer=await generateText(prompt);
+  addMessage(answer,"bot",results);
+  questionTotal++;localStorage.setItem("ls_questions",questionTotal);
+  document.getElementById("questionCount").textContent=questionTotal;
+ }catch(e){addMessage("Sorry, I couldn't answer: "+e.message,"bot")}
+ finally{busy=false}
+}
+function suggest(q){document.getElementById("questionInput").value=q;askQuestion()}
+
+const toolPrompts={
+ summary:"Create a clear chapter summary with headings, key concepts, definitions and a short revision section.",
+ mcq:"Create 10 multiple-choice questions with four options each. Give the correct answer and a short explanation after each question.",
+ quiz:"Create a practice quiz with the requested number of questions. Include a mixture of conceptual and factual questions, options, correct answers and explanations.",
+ flashcards:"Create 10 concise flashcards. Format each as FRONT: question and BACK: answer.",
+ topics:"Identify the most important academic topics, concepts, definitions and likely examination areas. Explain why each matters.",
+ simplify:"Explain the important concepts in simple beginner-friendly language with step-by-step explanations and easy examples."
+};
+async function runTool(type){
+ const output=type==="quiz"?document.getElementById("quizResult"):document.getElementById("toolResult");
+ if(type!=="quiz")navigate("tools");
+ output.style.display="block";output.className="result";output.textContent="Generating study material...";
+ try{
+  const results=await retrieve(toolPrompts[type],10);
+  const count=document.getElementById("quizCount")?.value||5;
+  const prompt=`You are LearnSphere AI, a study assistant.
+${languageInstruction()}
+Use ONLY the retrieved academic context below. If it is insufficient, state that clearly.
+Task: ${toolPrompts[type]}
+${type==="quiz"?"Generate exactly "+count+" questions.":""}
+Retrieved material:
+${contextFrom(results)}
+Make the output clear, accurate and easy to study.`;
+  const answer=await generateText(prompt);
+  output.textContent=answer+"\n\nRetrieved sources:\n"+[...new Set(results.map(r=>`${r.file}, page ${r.page}`))].join("\n");
+ }catch(e){output.textContent="Error: "+e.message}
+}
+
+async function refreshUI(){
+ const all=await getChunks();
+ const docs=[...new Set(all.map(c=>c.file))];
+ document.getElementById("docCount").textContent=docs.length;
+ document.getElementById("chunkCount").textContent=all.length;
+ document.getElementById("questionCount").textContent=questionTotal;
+ const recent=document.getElementById("recentDocs");
+ const list=document.getElementById("documentList");
+ if(!docs.length){
+  recent.innerHTML='<div class="empty">No documents uploaded yet.</div>';
+  list.innerHTML='<div class="empty">Your document library is empty.</div>';
+ }else{
+  const rows=docs.map(name=>`<div class="doc-row"><div class="doc-info"><div class="doc-icon">📄</div><div><strong>${escapeHTML(name)}</strong><small>${all.filter(c=>c.file===name).length} indexed chunks</small></div></div><button class="danger" onclick="removeDocument('${encodeURIComponent(name)}')">Delete</button></div>`).join("");
+  recent.innerHTML=rows;list.innerHTML=rows;
+ }
+ refreshChatInfo();
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+async function removeDocument(encoded){
+ const name=decodeURIComponent(encoded);
+ if(!confirm("Delete "+name+" and its indexed chunks?"))return;
+ await deleteDocChunks(name);await refreshUI();notify("Document deleted.");
+}
+async function refreshChatInfo(){
+ const all=await getChunks();
+ const docs=[...new Set(all.map(c=>c.file))];
+ document.getElementById("chatDocInfo").textContent=
+  `${docs.length} document(s) indexed · ${all.length} knowledge chunks`;
+}
+async function clearLibrary(){
+ if(!confirm("Delete all indexed documents and chunks?"))return;
+ const tx=db.transaction(STORE,"readwrite");tx.objectStore(STORE).clear();
+ tx.oncomplete=()=>{refreshUI();notify("Knowledge library cleared.")};
+}
+
+(async()=>{
+ try{await openDB();loadKey();await refreshUI()}
+ catch(e){notify("Browser storage could not be initialized: "+e.message)}
+})();
+</script>
+</body>
+</html>
