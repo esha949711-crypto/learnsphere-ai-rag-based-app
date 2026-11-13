@@ -280,7 +280,7 @@ input:focus,textarea:focus{border-color:var(--blue)}
  <div class="panel">
   <div class="setting-row">
    <h3>Google Gemini API Key</h3>
-   <p>Enter your API key to enable embeddings and AI responses. It is kept in this browser only.</p>
+   <p>Enter your API key to use Gemini 3.5 Flash-Lite for responses and Gemini Embedding 001 for indexing. It is kept in this browser only.</p>
    <input id="apiKey" type="password" placeholder="Enter your Gemini API key">
    <div style="display:flex;gap:9px;margin-top:10px;flex-wrap:wrap">
     <button class="primary" onclick="saveKey()">Save API key</button>
@@ -374,8 +374,8 @@ function loadKey(){document.getElementById("apiKey").value=localStorage.getItem(
 
 async function geminiRequest(model,method,body){
  const key=getKey();if(!key)throw Error("Add your Gemini API key in Settings first.");
- const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:${method}?key=${encodeURIComponent(key)}`;
- const response=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+ const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:${method}`;
+ const response=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},body:JSON.stringify(body)});
  const data=await response.json();
  if(!response.ok)throw Error(data.error?.message||"Gemini API request failed.");
  return data;
@@ -389,7 +389,7 @@ async function embedText(text){
  return data.embedding.values;
 }
 async function generateText(prompt){
- const data=await geminiRequest("gemini-2.5-flash","generateContent",{
+ const data=await geminiRequest("gemini-3.5-flash-lite","generateContent",{
   contents:[{role:"user",parts:[{text:prompt}]}],
   generationConfig:{temperature:0.3,maxOutputTokens:2500}
  });
